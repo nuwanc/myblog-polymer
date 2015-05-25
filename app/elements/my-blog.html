@@ -1,0 +1,106 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="../bower_components/core-pages/core-pages.html">
+<link rel="import" href="../bower_components/core-toolbar/core-toolbar.html">
+<link rel="import" href="../bower_components/core-scaffold/core-scaffold.html">
+<link rel="import" href="../bower_components/core-header-panel/core-header-panel.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/core-menu/core-menu.html">
+<link rel="import" href="../bower_components/core-item/core-item.html">
+<link rel="import" href="../bower_components/flatiron-director/flatiron-director.html">
+<link rel="import" href="../bower_components/paper-shadow/paper-shadow.html">
+<link rel="import" href="../bower_components/google-sheets/google-sheets.html">
+
+<polymer-element name="my-blog" attributes="">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      core-pages {
+    width: 90%;
+    height: 90%;
+    border: none;
+    -webkit-user-select: none;
+    border-radius: 5px;
+    transform: translateZ(0);
+  }
+
+  core-pages > div {
+    border-radius: inherit;
+    opacity: 0;
+    -webkit-transform: translate3d(0, 50px, 0) scale(0.9);
+    transform: translate3d(0, 50px, 0) scale(0.9);
+    transform-origin: 50% 50%;
+    transition: all 300ms cubic-bezier(.03,.56,.7,.98);
+    background-color: white;
+    padding: 20px;
+  }
+
+  core-pages .core-selected {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+    </style>
+    
+    <flatiron-director route="{{route}}" autoHash></flatiron-director>
+
+    <core-scaffold fit>
+    <core-header-panel navigation mode="seamed" flex>
+      <core-toolbar>My Polymer Blog</core-toolbar>
+      <core-menu>
+        <template repeat="{{post in posts}}">
+          <core-item icon="label-outline" label="{{post.gsx$title.$t}}" 
+                     active?="{{route == post.gsx$slug.$t}}"
+                     class="{{ {'core-selected' : route == post.gsx$slug.$t} | tokenList }}">
+            <a href="#{{post.gsx$slug.$t}}"></a>
+          </core-item>
+        </template>
+      </core-menu>
+    </core-header-panel>
+
+    <core-toolbar tool flex>
+      <div flex></div>
+      <paper-icon-button icon="refresh"></paper-icon-button>
+      <paper-icon-button icon="add"></paper-icon-button>
+    </core-toolbar>
+
+    <div layout horizontal center center-justified fit style="overflow-x: hidden;">
+      <core-pages selected="{{route}}" valueattr="hash">
+        <template repeat="{{post, i in posts}}">
+          <div hash="{{post.gsx$slug.$t}}">
+            <paper-shadow z="2"></paper-shadow>
+            <h2>
+              <a href="#{{post.gsx$slug.$t}}">
+                {{post.gsx$title.$t  }}
+              </a>
+            </h2>
+
+            <p>By {{post.gsx$author.$t}}</p>
+
+            <p>{{post.gsx$content.$t}}</p>
+
+            <p>Published on: {{post.gsx$date.$t}}</p>
+
+            <small>Keywords: {{post.gsx$keywords.$t}}</small>
+          </div>
+        </template>
+      </core-pages>
+
+    </div>
+  </core-scaffold>
+  <!--<core-ajax
+    auto
+    url="https://spreadsheets.google.com/feeds/list/0Ag-ZOhx6lZAhdGZGQUZGODJWVk5oX3hkblBSV1V0MlE/od6/public/values"
+    params='{"alt":"json"}'
+    handleAs="json"
+    response="{{posts}}"></core-ajax>-->
+
+  <google-sheets key="0Ag-ZOhx6lZAhdGZGQUZGODJWVk5oX3hkblBSV1V0MlE" rows="{{posts}}" published></google-sheets>
+  </template>
+  <script>
+    Polymer({
+
+    });
+  </script>
+</polymer-element>
